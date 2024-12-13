@@ -1,0 +1,40 @@
+@page {
+    size: A4;
+    margin: 0 auto; /* This will center the content horizontally */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#print-btn {
+    display: none;
+    visibility: none;
+}
+
+/* Style for the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+/* Style for alternating row colors */
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Style for hover effect */
+table tr:hover {
+    background-color: #f2f2f2;
+}
