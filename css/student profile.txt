@@ -1,0 +1,168 @@
+// with css student profile
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        form {
+            max-width: 1000px auto;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 3px solid red;
+            border-radius: 10px;
+        }
+        h3 {
+            margin-top: 0;
+            text-align: center;
+            color: red;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        button {
+            width: calc(20% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            text-decoration: none;
+            color: blue;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        img {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <form action="#" method="post">
+
+        <?php
+        	$var=null;
+			include "dbconnection.php";
+			if (isset($_COOKIE['memberid'])) {
+				 $var=$_COOKIE['memberid'];
+			}
+
+			$sql="SELECT * FROM registration where member_id ='$var'";
+			$result= $conn -> query($sql);
+			if($result -> num_rows > 0) {
+				$row=$result -> fetch_assoc();
+		?>
+		<input type="hidden" id="memberid" name="memberid" value="<?php echo "$var";?>">
+		<br>
+		Member Id : <?php echo $row['member_id'];?><br>
+		Name : <?php echo $row['name'];?><br>		
+		Address : <?php echo $row['address'];?><br>	
+		Mobile No. : <?php echo $row['mob'];?><br>	
+		Departmet Name : <?php echo $row['dept'];?><br>	
+		Course Name : <?php echo $row['course'];?><br>
+		Present Year : <?php echo $row['class']." Year";?><br>
+
+		<?php echo $row['hostel_admission_receipt']." Year";?><br>
+
+		<?php
+			}
+			echo "___________________________________________Bank Details___________________________________________";
+			$sql1="SELECT * FROM bank_detail where member_id='$var'";
+			$result1=$conn -> query($sql1);
+
+			if ($result1 -> num_rows > 0) {
+				$row=$result1 -> fetch_assoc();
+				echo "<br><br>Bank Name : ".$row['bank_name'];
+				echo "<br><br>Account Number : ".$row['account_no'];
+				echo "<br><br>Account Holder Name : ".$row['acc_holder_nm'];
+				echo "<br><br>IFSC Code : ".$row['ifsc_code'];
+				echo "<br><br>Branch : ".$row['branch'];
+			} else {
+		?>
+		<br>
+		<button id="bank_details" name="bank_detail">
+			<a href="Fill_bank_details.php?value=<?php echo $var;?>">Bank Details</a>
+		</button> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		<?php 
+			}
+			echo "<br><br>__________________________________________Deposite Details__________________________________________";
+			$sql1="SELECT * FROM deposite_detail where member_id='$var'";
+			$result1=$conn -> query($sql1);
+
+			if ($result1 -> num_rows > 0) {
+				$row=$result1 -> fetch_assoc();
+				echo "<br><br>Deposite Amount : ".$row['deposite_amount'];
+				echo "<br><br>Deposite Pay Date : ".$row['deposite_pay_date'];
+				echo "<br><br>Transaction Id : ".$row['transaction_id'];
+				echo "<br><br>Email : ".$row['email'];
+				echo "<br><br>Mobile Number : ".$row['mob'];
+				echo "<br><br>Receipt : ".$row['receipt'];
+			} else {
+		?>
+		<br>
+		<button id="deposite" name="deposite">
+			<a href="Deposite_fill.php?value=<?php echo $var;?>">Pay Deposite Detail</a>
+		</button>
+		<?php
+			}
+		?>
+		<?php
+			echo "<br><br>_______________________________________Monthly Mess Payment_______________________________________<br>";
+			echo "Month Name --->";
+			include "dbconnection.php";
+			echo "<table><tr><th>Month Name</th><th>Status</th><th>Upload</th></tr>";
+			$sql="SELECT month_name  FROM mess_amount ORDER BY id ASC";
+			$result=$conn -> query($sql);
+			if($result -> num_rows>0) {
+				while ($row=$result -> fetch_assoc()) {
+					$mahina = $row['month_name'];
+					echo " <input type='hidden' id='month' name='month' value='$mahina'>";
+					$sqlquery="SELECT * FROM dem_month where member_id='$var' and month_name='$mahina'";
+					$resul = $conn -> query($sqlquery);
+					if($resul -> num_rows >0) {
+						$payement_status="<img src='image/paid.jpeg' alt='Image Description' width='35' height='35'>";
+					} else {
+						$payement_status="<img src='image/unpaid.png' alt='Image Description' width='35' height='35'>";
+					}
+					$memberid=$var;
+					echo "<br><tr><td><a href='Monthly_payment_details.php?month=".$mahina."&memberid=".$memberid."'>".$mahina."</a></td><td>".$payement_status."</td><td><input type='file' name='file'>&nbsp&nbsp<button id='save' name='save'>UPLOAD</button></td></tr>";
+				}
+			}
+			echo"</table>";
+		?>
+    </form>
+</body>
+</html>
